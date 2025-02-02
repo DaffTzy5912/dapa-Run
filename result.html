@@ -57,9 +57,8 @@
 </div>
 
 <script>
-    // Ambil kode dari localStorage dan tampilkan di iframe
-    const userCode = localStorage.getItem('userCode');
-    document.getElementById('output').srcdoc = userCode;
+    const compiledCode = localStorage.getItem('compiledCode');
+    document.getElementById('output').srcdoc = compiledCode;
 
     function goBack() {
         window.location.href = 'index.html';
