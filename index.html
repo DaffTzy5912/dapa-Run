@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Code Runner</title>
+    <title>Advanced HTML Code Runner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,8 +31,9 @@
             border: none;
             font-family: 'Fira Code', monospace;
             font-size: 16px;
-            resize: none;
+            resize: vertical;
             outline: none;
+            margin-bottom: 10px;
         }
         .controls {
             text-align: center;
@@ -46,6 +48,7 @@
             font-size: 18px;
             border-radius: 5px;
             cursor: pointer;
+            margin: 5px;
             transition: all 0.3s ease;
         }
         button:hover {
@@ -56,36 +59,74 @@
 <body>
 
 <header>
-    <h1>⚡ Modern HTML Code Runner ⚡</h1>
+    <h1>⚡ Advanced HTML Code Runner ⚡</h1>
 </header>
 
-<textarea id="htmlCode" placeholder="Tulis kode HTML di sini...">
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Contoh</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #6a11cb; }
-        p { color: #333; }
-    </style>
-</head>
-<body>
-    <h1>Hello World!</h1>
-    <p>Ini adalah contoh output.</p>
-</body>
-</html>
-</textarea>
+<textarea id="htmlCode" placeholder="Tulis kode HTML di sini..."></textarea>
+<textarea id="cssCode" placeholder="Tulis kode CSS di sini..."></textarea>
+<textarea id="jsCode" placeholder="Tulis kode JavaScript di sini..."></textarea>
 
 <div class="controls">
     <button onclick="runCode()">🚀 Run Code</button>
+    <button onclick="downloadCode()">💾 Download</button>
+    <button onclick="clearCode()">🗑️ Clear</button>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script>
+    const htmlCode = document.getElementById('htmlCode');
+    const cssCode = document.getElementById('cssCode');
+    const jsCode = document.getElementById('jsCode');
+
+    // Auto-Save Real-Time
+    [htmlCode, cssCode, jsCode].forEach(editor => {
+        editor.value = localStorage.getItem(editor.id) || '';
+        editor.addEventListener('input', () => {
+            localStorage.setItem(editor.id, editor.value);
+        });
+    });
+
+    // Jalankan Kode
     function runCode() {
-        const code = document.getElementById('htmlCode').value;
-        localStorage.setItem('userCode', code); // Simpan kode di localStorage
-        window.location.href = 'result.html'; // Arahkan ke halaman hasil
+        const code = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>${cssCode.value}</style>
+            </head>
+            <body>
+                ${htmlCode.value}
+                <script>
+                    try {
+                        ${jsCode.value}
+                    } catch (error) {
+                        document.body.innerHTML += '<pre style="color: red;">' + error + '</pre>';
+                    }
+                </script>
+            </body>
+            </html>
+        `;
+        localStorage.setItem('compiledCode', code);
+        window.location.href = 'result.html';
+    }
+
+    // Download Kode
+    function downloadCode() {
+        const blob = new Blob([htmlCode.value], { type: 'text/html' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'index.html';
+        link.click();
+    }
+
+    // Clear Code
+    function clearCode() {
+        if (confirm("Yakin mau hapus semua kode?")) {
+            [htmlCode, cssCode, jsCode].forEach(editor => {
+                editor.value = '';
+                localStorage.removeItem(editor.id);
+            });
+        }
     }
 </script>
 
