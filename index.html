@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced HTML Code Runner</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -72,7 +71,6 @@
     <button onclick="clearCode()">🗑️ Clear</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script>
     const htmlCode = document.getElementById('htmlCode');
     const cssCode = document.getElementById('cssCode');
@@ -102,7 +100,7 @@
                     } catch (error) {
                         document.body.innerHTML += '<pre style="color: red;">' + error + '</pre>';
                     }
-                </script>
+                <\/script>
             </body>
             </html>
         `;
