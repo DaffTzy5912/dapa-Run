@@ -69,22 +69,66 @@
     <button onclick="runCode()">🚀 Run Code</button>
     <button onclick="downloadCode()">💾 Download</button>
     <button onclick="clearCode()">🗑️ Clear</button>
+    <button onclick="undoCode()">⏪ Undo</button>
+    <button onclick="redoCode()">⏩ Redo</button>
+    <button onclick="autoFormatCode()">🔄 Auto Format</button>
 </div>
 
 <script>
     const htmlCode = document.getElementById('htmlCode');
     const cssCode = document.getElementById('cssCode');
     const jsCode = document.getElementById('jsCode');
+    
+    let history = [];
+    let historyIndex = -1;
 
-    // Auto-Save Real-Time
+    // Load saved content
     [htmlCode, cssCode, jsCode].forEach(editor => {
         editor.value = localStorage.getItem(editor.id) || '';
+    });
+
+    // Save history on every change
+    [htmlCode, cssCode, jsCode].forEach(editor => {
         editor.addEventListener('input', () => {
+            // Keep track of history
+            history.push({ html: htmlCode.value, css: cssCode.value, js: jsCode.value });
+            historyIndex = history.length - 1;
             localStorage.setItem(editor.id, editor.value);
         });
     });
 
-    // Jalankan Kode
+    // Undo Functionality
+    function undoCode() {
+        if (historyIndex > 0) {
+            historyIndex--;
+            htmlCode.value = history[historyIndex].html;
+            cssCode.value = history[historyIndex].css;
+            jsCode.value = history[historyIndex].js;
+        }
+    }
+
+    // Redo Functionality
+    function redoCode() {
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            htmlCode.value = history[historyIndex].html;
+            cssCode.value = history[historyIndex].css;
+            jsCode.value = history[historyIndex].js;
+        }
+    }
+
+    // Auto-formatting of code
+    function autoFormatCode() {
+        htmlCode.value = formatCode(htmlCode.value);
+        cssCode.value = formatCode(cssCode.value);
+        jsCode.value = formatCode(jsCode.value);
+    }
+
+    function formatCode(code) {
+        return code.replace(/\n/g, '').replace(/\s+/g, ' ').trim(); // Simplified version
+    }
+
+    // Run Code and Save to Local Storage
     function runCode() {
         const code = `
             <!DOCTYPE html>
@@ -100,7 +144,7 @@
                     } catch (error) {
                         document.body.innerHTML += '<pre style="color: red;">' + error + '</pre>';
                     }
-                <\/script>
+                </script>
             </body>
             </html>
         `;
@@ -108,7 +152,7 @@
         window.location.href = 'result.html';
     }
 
-    // Download Kode
+    // Download Code
     function downloadCode() {
         const blob = new Blob([htmlCode.value], { type: 'text/html' });
         const link = document.createElement('a');
