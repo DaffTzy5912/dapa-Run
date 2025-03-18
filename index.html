@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced HTML Code Runner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f;
+            color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+        header {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        textarea {
+            flex: 1;
+            background-color: #2b2b3d;
+            color: #f8f8f2;
+            padding: 20px;
+            border: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 16px;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 10px;
+        }
+        .controls {
+            text-align: center;
+            padding: 15px;
+            background-color: #282a36;
+        }
+        button {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚡ Advanced HTML Code Runner ⚡</h1>
+</header>
+
+<textarea id="htmlCode" placeholder="Tulis kode HTML di sini..."></textarea>
+<textarea id="cssCode" placeholder="Tulis kode CSS di sini..."></textarea>
+<textarea id="jsCode" placeholder="Tulis kode JavaScript di sini..."></textarea>
+<textarea id="jsonCode" placeholder="Tulis JSON di sini..."></textarea>
+
+<div class="controls">
+    <button onclick="runCode()">🚀 Run Code</button>
+    <button onclick="downloadCode()">💾 Download</button>
+    <button onclick="clearCode()">🗑️ Clear</button>
+</div>
+
+<script>
+    const htmlCode = document.getElementById('htmlCode');
+    const cssCode = document.getElementById('cssCode');
+    const jsCode = document.getElementById('jsCode');
+    const jsonCode = document.getElementById('jsonCode');
+
+    // Auto-Save Real-Time
+    [htmlCode, cssCode, jsCode, jsonCode].forEach(editor => {
+        editor.value = localStorage.getItem(editor.id) || '';
+        editor.addEventListener('input', () => {
+            localStorage.setItem(editor.id, editor.value);
+        });
+    });
+
+    // Validasi JSON
+    function validateJSON(jsonString) {
+        try {
+            return JSON.parse(jsonString);
+        } catch (error) {
+            alert("JSON tidak valid: " + error.message);
+            return null;
+        }
+    }
+
+    // Jalankan Kode
+    function runCode() {
+        const parsedJSON = validateJSON(jsonCode.value);
+        if (parsedJSON === null) return; // Jika JSON tidak valid, hentikan eksekusi
+
+        const code = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>${cssCode.value}</style>
+            </head>
+            <body>
+                ${htmlCode.value}
+                <script>
+                    try {
+                        const jsonData = ${jsonCode.value};
+                        ${jsCode.value}
+                    } catch (error) {
+                        document.body.innerHTML += '<pre style="color: red;">' + error + '</pre>';
+                    }
+                <\/script>
+            </body>
+            </html>
+        `;
+        localStorage.setItem('compiledCode', code);
+        window.location.href = 'result.html';
+    }
+
+    // Download Kode
+    function downloadCode() {
+        const blob = new Blob([htmlCode.value], { type: 'text/html' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'index.html';
+        link.click();
+    }
+
+    // Clear Code
+    function clearCode() {
+        if (confirm("Yakin mau hapus semua kode?")) {
+            [htmlCode, cssCode, jsCode, jsonCode].forEach(editor => {
+                editor.value = '';
+                localStorage.removeItem(editor.id);
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
